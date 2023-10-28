@@ -153,9 +153,13 @@ export default {
       dirLight.castShadow = true;
       this.scene.add(dirLight);
 
-
       // grid helper
-      const gridHelper = new this.$THREE.GridHelper(400, 40, 0x0000ff, 0x808080);
+      const gridHelper = new this.$THREE.GridHelper(
+        400,
+        40,
+        0x0000ff,
+        0x808080
+      );
       gridHelper.rotation.x = -Math.PI / 2;
       this.scene.add(gridHelper);
 
@@ -170,18 +174,23 @@ export default {
       // console.log(this.$refs.canvas);
       const rect = document.querySelector("canvas").getBoundingClientRect();
       let viewportDown = new this.$THREE.Vector2();
-      viewportDown.x = (((event.clientX - rect.left) / rect.width) * 2) - 1;
+      viewportDown.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       viewportDown.y = -(((event.clientY - rect.top) / rect.height) * 2) + 1;
 
       // compute 3d point
-      this.pointOnScreen = this.worldPointFromScreenPoint(viewportDown, this.camera);
-
+      this.pointOnScreen = this.worldPointFromScreenPoint(
+        viewportDown,
+        this.camera
+      );
     },
     constructPoint() {
-      return new this.$rhino.Point(this.pointOnScreen.x, this.pointOnScreen.y, this.pointOnScreen.z);
+      return new this.$rhino.Point(
+        this.pointOnScreen.x,
+        this.pointOnScreen.y,
+        this.pointOnScreen.z
+      );
     },
     worldPointFromScreenPoint(screenPoint, camera) {
-
       let worldPoint = new this.$THREE.Vector3();
       worldPoint.x = screenPoint.x;
       worldPoint.y = screenPoint.y;
@@ -225,13 +234,16 @@ export default {
       const param3 = new this.$RhinoCompute.Grasshopper.DataTree("Count");
       param3.append([0], [this.count_slider.value]);
 
-
       const pts = new this.$rhino.Point3dList();
       const datas = [];
       const param4 = new this.$RhinoCompute.Grasshopper.DataTree("Points");
 
       for (let i = 0; i < this.points.length; i++) {
-        const point = [this.points[i] != null ? this.points[i].x : 0, this.points[i] != null ? this.points[i].y : 0, this.points[i] != null ? this.points[i].z : 0];
+        const point = [
+          this.points[i] != null ? this.points[i].x : 0,
+          this.points[i] != null ? this.points[i].y : 0,
+          this.points[i] != null ? this.points[i].z : 0
+        ];
         const tempPt = new this.$rhino.Point(point);
         console.log(tempPt);
         const ptData = JSON.stringify(tempPt.encode());
@@ -257,14 +269,12 @@ export default {
     },
 
     parseRhino3dmObjects(response) {
-
       this.doc = new this.$rhino.File3dm();
 
       const values = response.values;
 
       // clear doc
-      if (this.doc !== undefined)
-        this.doc.delete();
+      if (this.doc !== undefined) this.doc.delete();
 
       //console.log(values)
       this.doc = new this.$rhino.File3dm();
@@ -304,11 +314,15 @@ export default {
       });
 
       // parse object
-      loader.parse(arr, function(object) {
+      loader.parse(arr, function (object) {
         console.log("object parsed", object);
         console.log("scene", scene);
         scene.traverse(child => {
-          if (child.type == "Object3D" || child.type == "Mesh" || child.type == "Curve")
+          if (
+            child.type == "Object3D" ||
+            child.type == "Mesh" ||
+            child.type == "Curve"
+          )
             scene.remove(child);
         });
 
@@ -332,15 +346,14 @@ export default {
       if (item.type === "System.String") {
         // hack for draco meshes
         try {
-          const mesh = this.$rhino.DracoCompression.decompressBase64String(data);
+          const mesh =
+            this.$rhino.DracoCompression.decompressBase64String(data);
           return mesh;
-        } catch {
-        } // ignore errors (maybe the string was just a string...)
+        } catch {} // ignore errors (maybe the string was just a string...)
       } else if (typeof data === "object") {
         // console.log("it's object");
         return this.$rhino.CommonObject.decode(data);
       } else {
-
       }
       return null;
     },
@@ -348,7 +361,6 @@ export default {
     async onInputChanged() {
       await this.compute();
     }
-
   }
 };
 </script>
